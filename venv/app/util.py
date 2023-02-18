@@ -1,7 +1,7 @@
 from app.db import *
 
 def retrieve_data(data):
-    bidder_data = get_collection()    
+    bidder_data = get_bidder_data()    
     user_data = {}
     data = data["input"]
 
@@ -26,3 +26,16 @@ def retrieve_data(data):
     
     print(user_data)
     bidder_data.insert_one(user_data)
+    print("Details inserted successfully!")
+
+def upload_links(data):
+    document_links = get_document_links()    
+    links = {}
+    
+    links["pan"] = data["pan"]
+    links["gst"] = data["gst"]
+    links["sat_work"] = data["sat_work"]
+
+    print(links)
+    document_links.insert_one(links)
+    print("Links inserted successfully!")
