@@ -1,7 +1,8 @@
 from app.db import *
 import boto3
-from botocore import client
 from app.secrets import secrets
+from botocore.client import Config
+import boto3.session
 
 def retrieve_data(data):
     bidder_data = get_bidder_data()    
@@ -46,8 +47,8 @@ def upload_links(data):
 
 
 def create_presigned_url(expiration=3600):
-    print(secrets)
-    s3 = boto3.client('s3', aws_access_key_id=secrets['ACCESS_KEY'], aws_secret_access_key= secrets['SECRET_ACCESS_KEY'])
+    my_session = boto3.session.Session(aws_access_key_id=secrets['ACCESS_KEY'], aws_secret_access_key=secrets['SECRET_ACCESS_KEY'], region_name='ap-south-1')
+    s3 = my_session.client('s3', config=Config(signature_version='s3v4'))
     url = s3.generate_presigned_url(
         ClientMethod='put_object',
         Params={
@@ -58,4 +59,3 @@ def create_presigned_url(expiration=3600):
     )
     print(url)
     return url
-
