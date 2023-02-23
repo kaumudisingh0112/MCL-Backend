@@ -1,7 +1,7 @@
 from flask_restful import Api, Resource
 from flask import request
 from app import app
-from app.util import retrieve_data, upload_links
+from app.util import retrieve_data, upload_links, create_presigned_url
 
 api = Api(app)
 
@@ -18,6 +18,19 @@ class Details(Resource):
 
 api.add_resource(Details, "/details")
 
+class GetUploadURL(Resource):
+    response = {"status": 400, "message": "URL not generated"}
+
+    def get(self):
+        url = create_presigned_url()
+        self.response["status"] = 201
+        self.response["message"] = url
+
+        return self.response, 201
+
+api.add_resource(GetUploadURL, "/getuploadurl")
+
+
 class UploadLinks(Resource):
     response = {"status": 400, "message": "Documents not uploaded"}
 
@@ -29,4 +42,4 @@ class UploadLinks(Resource):
 
         return self.response, 201
 
-api.add_resource(UploadLinks, "/upload")
+api.add_resource(UploadLinks, "/uploaddetails")

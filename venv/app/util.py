@@ -1,4 +1,7 @@
 from app.db import *
+import boto3
+from botocore import client
+from app.secrets import secrets
 
 def retrieve_data(data):
     bidder_data = get_bidder_data()    
@@ -39,3 +42,21 @@ def upload_links(data):
     print(links)
     document_links.insert_one(links)
     print("Links inserted successfully!")
+
+
+
+def create_presigned_url(expiration=3600):
+    print(secrets)
+    s3 = boto3.client('s3', aws_access_key_id=secrets['ACCESS_KEY'], aws_secret_access_key= secrets['SECRET_ACCESS_KEY'])
+    # s3 = boto3.client('s3', aws_access_key_id="AKIAUFGB4CJKCWLR7TH3", aws_secret_access_key="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")
+    url = s3.generate_presigned_url(
+        ClientMethod='put_object',
+        Params={
+            'Bucket': 'shalakufileupload',
+            'Key': 'key-name'
+        },
+        ExpiresIn=expiration
+    )
+    print(url)
+    return url
+
